@@ -199,26 +199,34 @@ def Update(butterflyboard, board):
                 if board[smallestiIndex-f+numx][smallestjIndex-g+numy].possible_values.count(str(x)) > 0:
                     board[smallestiIndex-f+numx][smallestjIndex-g+numy].possible_values.remove(x)
         board[smallestiIndex][smallestjIndex].possible_values.clear()
-    print("Update was called and able to place", x, "at", "board[", smallestiIndex, "]","[", smallestjIndex, "]")
+    # print("Update was called and able to place", x, "at", "board[", smallestiIndex, "]","[", smallestjIndex, "]")
 
+def Complete(board):
+    counter = 0
+    for i in range(9):
+        for j in range(9):
+            counter = counter + int(board[i][j].value)
+    return counter
 
-GenerateButterflyBoard(board)
-butterflyBoard = copy.deepcopy(board)
-PrintPuzzle(butterflyBoard)
-ContinueButterflyBoard(butterflyBoard)
-PrintPuzzle(butterflyBoard)
-Update(butterflyBoard, board) # Maybe do a check in this to see if all tiles are filled in butterfly?
-print("v butterfly board after update v")
-PrintPuzzle(butterflyBoard)
-print("v board after update v")
-PrintPuzzle(board)
-butterflyBoard = copy.deepcopy(board)
-print("v butterfly board after clone v")
-PrintPuzzle(butterflyBoard)
+# GenerateButterflyBoard(board)
+# butterflyBoard = copy.deepcopy(board)
+# PrintPuzzle(butterflyBoard)
+# ContinueButterflyBoard(butterflyBoard)
+# PrintPuzzle(butterflyBoard)
+# Update(butterflyBoard, board) # Maybe do a check in this to see if all tiles are filled in butterfly?
+# print("v butterfly board after update v")
+# PrintPuzzle(butterflyBoard)
+# print("v board after update v")
+# PrintPuzzle(board)
+# butterflyBoard = copy.deepcopy(board)
+# print("v butterfly board after clone v")
+# PrintPuzzle(butterflyBoard)
+# 
+# ContinueButterflyBoard(butterflyBoard)
+# print("v butterfly board after continue #2 v")
+# PrintPuzzle(butterflyBoard)
+# Complete(butterflyBoard)
 
-ContinueButterflyBoard(butterflyBoard)
-print("v butterfly board after continue #2 v")
-PrintPuzzle(butterflyBoard)
 # At this point it is possible to have a complete board but not likely
 # We need to save off the GenerateButterflyBoard and pass continue a clone
 # When we update the board we need to pass the update function the Continued Butterfly Board and whatever change it makes, we need to make the same change on the original.
@@ -228,3 +236,32 @@ PrintPuzzle(butterflyBoard)
 
 # The above comments now work!
 # Now just need to put them in a while loop and combine them all together
+# Make a Complete() function that goes through and make sure the total of all values being summed is
+
+GenerateButterflyBoard(board)
+butterflyBoard = copy.deepcopy(board)
+while(True):
+    butterflyBoard = copy.deepcopy(board)
+
+    total = Complete(butterflyBoard)
+    print("Total", total)
+    if total == 405:
+        break
+    ContinueButterflyBoard(butterflyBoard)
+
+    total = Complete(butterflyBoard)
+    print("Total", total)
+    if total == 405:
+        break
+    Update(butterflyBoard, board)
+
+    total = Complete(butterflyBoard)
+    print("Total", total)
+    if total == 405:
+        break
+    PrintPuzzle(butterflyBoard)
+print("The puzzle has been generated!")
+print("The solved puzzle will be")
+PrintPuzzle(butterflyBoard)
+print("The given board will be")
+PrintPuzzle(board)
