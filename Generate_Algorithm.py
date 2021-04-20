@@ -8,39 +8,6 @@ class Tile(object):
         self.tileNum = num
         self.possible_length = len(self.possible_values)
 
-board = [ [],[],[],[],[],[],[],[],[] ]
-butterflyBoard = [ [],[],[],[],[],[],[],[],[] ]
-tilelst = [Tile(i) for i in range(81)]
-indexnum = 0
-for tile in tilelst:
-    if indexnum < 9:
-        board[0].append(tile)
-        indexnum += 1
-    elif indexnum < 18:
-        board[1].append(tile)
-        indexnum += 1
-    elif indexnum < 27:
-        board[2].append(tile)
-        indexnum += 1
-    elif indexnum < 36:
-        board[3].append(tile)
-        indexnum += 1
-    elif indexnum < 45:
-        board[4].append(tile)
-        indexnum += 1
-    elif indexnum < 54:
-        board[5].append(tile)
-        indexnum += 1
-    elif indexnum < 63:
-        board[6].append(tile)
-        indexnum += 1
-    elif indexnum < 72:
-        board[7].append(tile)
-        indexnum += 1
-    else:
-        board[8].append(tile)
-        indexnum += 1
-
 row = 9
 col = 9
 
@@ -140,7 +107,7 @@ def GenerateButterflyBoard(board):
                     if board[i-f+numx][j-g+numy].possible_values.count(str(x)) > 0:
                         board[i-f+numx][j-g+numy].possible_values.remove(x)
             board[i][j].possible_values.clear()
-    print("Generate Butterfly: smallestPossible", smallestPossible, "smallestiIndex:", smallestiIndex, " smallestjIndex: ",smallestjIndex)
+    # print("Generate Butterfly: smallestPossible", smallestPossible, "smallestiIndex:", smallestiIndex, " smallestjIndex: ",smallestjIndex)
 
 def ContinueButterflyBoard(board):
     for i in range(9):
@@ -166,7 +133,7 @@ def ContinueButterflyBoard(board):
                             board[i-f+numx][j-g+numy].possible_values.remove(x)
                 board[i][j].possible_values.clear()
                 # Recursively do this function till either a finish board or we have to guess
-                print("Continue was called and able to place", x, "at", "board[", i, "]","[", j, "]")
+                # print("Continue was called and able to place", x, "at", "board[", i, "]","[", j, "]")
                 ContinueButterflyBoard(board)
 
 def Update(butterflyboard, board):
@@ -179,7 +146,7 @@ def Update(butterflyboard, board):
                     smallestPossible = len(board[c][d].possible_values)
                     smallestiIndex = c
                     smallestjIndex = d
-    if (butterflyboard[smallestiIndex][smallestjIndex].value == 0):
+    if (butterflyboard[smallestiIndex][smallestjIndex].value == 0 and (len(butterflyboard[smallestiIndex][smallestjIndex].possible_values) > 0)):
         f = smallestiIndex % 3
         g = smallestjIndex % 3
         # We need to pick a random number to update our original puzzle because it wasn't complete
@@ -238,30 +205,50 @@ def Complete(board):
 # Now just need to put them in a while loop and combine them all together
 # Make a Complete() function that goes through and make sure the total of all values being summed is
 
-GenerateButterflyBoard(board)
-butterflyBoard = copy.deepcopy(board)
+
 while(True):
+    board = [ [],[],[],[],[],[],[],[],[] ]
+    butterflyBoard = [ [],[],[],[],[],[],[],[],[] ]
+    tilelst = [Tile(i) for i in range(81)]
+    indexnum = 0
+    for tile in tilelst:
+        if indexnum < 9:
+            board[0].append(tile)
+            indexnum += 1
+        elif indexnum < 18:
+            board[1].append(tile)
+            indexnum += 1
+        elif indexnum < 27:
+            board[2].append(tile)
+            indexnum += 1
+        elif indexnum < 36:
+            board[3].append(tile)
+            indexnum += 1
+        elif indexnum < 45:
+            board[4].append(tile)
+            indexnum += 1
+        elif indexnum < 54:
+            board[5].append(tile)
+            indexnum += 1
+        elif indexnum < 63:
+            board[6].append(tile)
+            indexnum += 1
+        elif indexnum < 72:
+            board[7].append(tile)
+            indexnum += 1
+        else:
+            board[8].append(tile)
+            indexnum += 1
+    GenerateButterflyBoard(board)
     butterflyBoard = copy.deepcopy(board)
-
-    total = Complete(butterflyBoard)
-    print("Total", total)
-    if total == 405:
-        break
-    ContinueButterflyBoard(butterflyBoard)
-
-    total = Complete(butterflyBoard)
-    print("Total", total)
-    if total == 405:
-        break
-    Update(butterflyBoard, board)
-
-    total = Complete(butterflyBoard)
-    print("Total", total)
-    if total == 405:
-        break
-    PrintPuzzle(butterflyBoard)
-print("The puzzle has been generated!")
-print("The solved puzzle will be")
-PrintPuzzle(butterflyBoard)
-print("The given board will be")
-PrintPuzzle(board)
+        
+    for i in range(81):
+        butterflyBoard = copy.deepcopy(board)
+        ContinueButterflyBoard(butterflyBoard)
+        Update(butterflyBoard, board)
+    if Complete(butterflyBoard) == 405:
+        print("The puzzle has been generated!")
+        print("The solved puzzle will be")
+        PrintPuzzle(butterflyBoard)
+        print("The given board will be")
+        PrintPuzzle(board)
