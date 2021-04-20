@@ -1,5 +1,6 @@
 import random
 import copy
+import json
 
 class Tile(object):
     def __init__(self,num):
@@ -10,6 +11,15 @@ class Tile(object):
 
 row = 9
 col = 9
+
+index = 1
+numOfEasy = 0
+numOfMediums = 0
+numOfHard = 0
+allPuzzles = {}
+allPuzzles['easypuzzles'] = []
+allPuzzles['mediumpuzzles'] = []
+allPuzzles['hardpuzzles'] = []
 
 def PrintPuzzle(board):
     for i in range(row):
@@ -175,6 +185,38 @@ def Complete(board):
             counter = counter + int(board[i][j].value)
     return counter
 
+def formatSolvedPuzzle(board):
+    s = ""
+    for i in range(9):
+        for j in range(9):
+            s = s + str(board[i][j].value)
+    return s
+
+def formatMaskedPuzzle(board):
+    s = ""
+    for i in range(9):
+        for j in range(9):
+            if int(board[i][j].value) > 0:
+                s = s + "T"
+            else:
+                s = s + "F"
+
+    return s
+
+def calculateDifficulty(board):
+    counter = 0
+    for i in range(9):
+        for j in range(9):
+            if int(board[i][j].value) > 0:
+                counter = counter + 1
+    if counter < 30:
+        return "hard"
+    elif counter < 40:
+        return "medium"
+    else:
+        return "easy"
+
+
 # GenerateButterflyBoard(board)
 # butterflyBoard = copy.deepcopy(board)
 # PrintPuzzle(butterflyBoard)
@@ -247,8 +289,29 @@ while(True):
         ContinueButterflyBoard(butterflyBoard)
         Update(butterflyBoard, board)
     if Complete(butterflyBoard) == 405:
-        print("The puzzle has been generated!")
-        print("The solved puzzle will be")
-        PrintPuzzle(butterflyBoard)
-        print("The given board will be")
-        PrintPuzzle(board)
+        solution = formatSolvedPuzzle(butterflyBoard)
+        mask = formatMaskedPuzzle(board)
+        score = calculateDifficulty(board)
+        if score == "easy" and numOfEasy < 10:
+            print("Made an Easy ")
+            allPuzzles['easypuzzles'].append({'index': numOfEasy, 'difficulty': score, 'solution': solution, 'mask': mask})
+            numOfEasy = numOfEasy + 1
+        elif score == "medium" and numOfMediums < 10:
+            print("Made a Medium ")
+            allPuzzles['mediumpuzzles'].append({'index': numOfMediums, 'difficulty': score, 'solution': solution, 'mask': mask})
+            numOfMediums = numOfMediums + 1
+        elif score == "hard" and numOfHard < 10:
+            print("Made a Hard ")
+            allPuzzles['hardpuzzles'].append({'index': numOfHard, 'difficulty': score, 'solution': solution, 'mask': mask})
+            numOfHard = numOfHard + 1
+        if numOfEasy == 10 and numOfMediums == 10 and numOfHard == 10:
+            break
+        #print("The puzzle has been generated!")
+        #print("The solved puzzle will be")
+        #PrintPuzzle(butterflyBoard)
+        #print("The given board will be")
+        #PrintPuzzle(board)
+jsonString = json.dumps(allPuzzles, indent=4)
+#print(jsonString)
+with open('puzzles.json', 'w') as outfile:
+    json.dump(allPuzzles, outfile)
